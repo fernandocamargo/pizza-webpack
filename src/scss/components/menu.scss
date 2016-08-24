@@ -1,0 +1,91 @@
+.navigation.menu {
+  border: solid 1px #999;
+  border-radius: 10px;
+  box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  position: fixed;
+  width: 250px;
+  z-index: 1;
+}
+
+.navigation.menu:not(.loading):before {
+  background-color: #fff;
+  background-image:
+    linear-gradient(90deg, transparent 29px, #abced4 29px, #abced4 31px, transparent 31px),
+    linear-gradient(#eee .1em, transparent .1em);
+  background-size: 100% 41px;
+  border-radius: inherit;
+  content: '';
+  display: block;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.navigation.menu .item {
+  overflow: hidden;
+  position: relative;
+}
+
+.navigation.menu .item:before,
+.navigation.menu .item:after {
+  content: '';
+  display: block;
+  position: absolute;
+}
+
+.navigation.menu .item:before {
+  height: 100%;
+  width: 100%;
+}
+
+.navigation.menu .item:after {
+  background-color: inherit;
+  border: solid 1px transparent;
+  border-radius: 10px;
+  box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.5);
+  height: 20px;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  z-index: 2;
+}
+
+.navigation.menu .item.loading:after {
+  border-color: #fff;
+}
+
+.navigation.menu .anchor {
+  color: #000f55;
+  cursor: move;
+  display: block;
+  font-size: 25px;
+  line-height: 21px;
+  overflow: hidden;
+  padding: 10px 40px;
+  position: relative;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.navigation.menu .item.loading .anchor {
+  background-color: inherit;
+  animation: loading 2s linear infinite;
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 50px 50px;
+}

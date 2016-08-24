@@ -1,0 +1,16 @@
+@import 'typography';
+@import 'reset';
+@import 'generic';
+@import 'motion';
+
+@import 'components/loading';
+@import 'components/menu';
+@import 'components/pizzas';
+
+.wrapper.app {
+  padding: 10px;
+}
+
+.wrapper.app > .title {
+  display: none;
+}
