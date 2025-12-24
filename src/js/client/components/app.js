@@ -1,4 +1,4 @@
-import toArray from 'lodash/toarray'
+import toArray from 'lodash/toArray'
 import isEqual from 'lodash/isEqual'
 import React, {Component, PropTypes} from 'react'
 import {default as HTML5Backend} from 'react-dnd-html5-backend'

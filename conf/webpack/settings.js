@@ -16,6 +16,6 @@ module.exports = {
     font: ['eot', 'ttf', 'woff', 'woff2'],
     vector: ['svg']
   },
-  host: 'localhost',
-  port: 8080
+  host: process.env.HOST || '0.0.0.0',
+  port: process.env.PORT || 8080
 }
