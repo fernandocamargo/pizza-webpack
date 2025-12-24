@@ -2,6 +2,24 @@
 
 A React 15 + webpack 1 pizza builder from the 2016 era - a time capsule of cutting-edge web development practices from the "golden age" of the React/Redux ecosystem.
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Technical Highlights](#technical-highlights)
+  - [React DnD: Dan Abramov's Innovative Approach](#react-dnd-dan-abramovs-innovative-approach)
+  - [Webpack 1: The Module Bundler Revolution](#webpack-1-the-module-bundler-revolution)
+- [Technology Stack](#technology-stack)
+- [Architecture & Patterns](#architecture--patterns)
+  - [Flux/Redux Architecture](#fluxredux-architecture)
+  - [Immutability Pattern](#immutability-pattern)
+  - [Testing Strategy](#testing-strategy)
+  - [Advanced Patterns & Utilities](#advanced-patterns--utilities)
+- [What This Project Demonstrates](#what-this-project-demonstrates)
+- [Reflections: 2016 vs 2025](#reflections-2016-vs-2025)
+- [Technical Deep Dives](#technical-deep-dives)
+- [Installation & Usage](#installation--usage)
+- [Additional Learning Resources](#additional-learning-resources)
+
 ## Overview
 
 This project showcases a **drag-and-drop pizza builder** where users can create custom pizzas by dragging toppings onto pizza slots. Built in **August-September 2016**, it demonstrates the architectural patterns, tooling complexity, and innovative libraries that defined modern web development at the peak of the pre-hooks React era.
@@ -23,50 +41,80 @@ This codebase represents a pivotal moment in web development history:
 This project uses [**react-dnd**](https://github.com/react-dnd/react-dnd) by [Dan Abramov](https://github.com/gaearon) (co-author of Redux, Create React App, and React core team member), which revolutionized drag-and-drop in React applications.
 
 **Why it was innovative:**
-- **Declarative API** for drag-and-drop (vs. imperative DOM manipulation)
-- **Backend-agnostic**: Supports HTML5 drag-and-drop API and touch events
-- **Higher-Order Components pattern** for composable behavior
-- **Immutable state transitions** aligned with React's philosophy
-- **Built on Flux principles** with unidirectional data flow
+- **[Declarative API](https://en.wikipedia.org/wiki/Declarative_programming)** for drag-and-drop (vs. [imperative DOM manipulation](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction))
+- **Backend-agnostic**: Supports [HTML5 Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API) and [touch events](https://developer.mozilla.org/en-US/docs/Web/API/Touch_events)
+- **[Higher-Order Components pattern](https://reactjs.org/docs/higher-order-components.html)** for composable behavior
+- **[Immutable state transitions](https://en.wikipedia.org/wiki/Immutable_object)** aligned with React's philosophy
+- **Built on [Flux principles](https://facebook.github.io/flux/docs/in-depth-overview)** with unidirectional data flow
 
-Example from this codebase:
+**Implementation in this codebase:**
+- [`src/js/client/components/topping.js`](src/js/client/components/topping.js) - Draggable topping component
+- [`src/js/client/components/pizza.js`](src/js/client/components/pizza.js) - Droppable pizza slot component
+- [`src/js/client/constants/drag.js`](src/js/client/constants/drag.js) - Drag source type constants
+
+Example from [`topping.js:39-40`](src/js/client/components/topping.js#L39-L40):
 ```javascript
-// Drag source decorator
+// Drag source decorator - makes topping draggable
 export default DragSource(TOPPING_DRAG_SOURCE, source, collect)(Topping)
+```
 
-// Drop target decorator
+Example from [`pizza.js:71-72`](src/js/client/components/pizza.js#L71-L72):
+```javascript
+// Drop target decorator - makes pizza accept toppings
 export default DropTarget([TOPPING_DRAG_SOURCE], target, collect)(Pizza)
 ```
 
 **Further reading:**
 - [React DnD Documentation](https://react-dnd.github.io/react-dnd/)
 - [Dan Abramov's Blog](https://overreacted.io/)
+- [React DnD: Declarative Drag and Drop](https://www.youtube.com/watch?v=XiHfYdwJgXQ) - Conference talk
 
 ### Webpack 1: The Module Bundler Revolution
 
-[**Webpack**](https://webpack.js.org/) transformed how we build web applications by treating everything as a module.
+[**Webpack**](https://webpack.js.org/) transformed how we build web applications by treating everything as a module using the [**dependency graph**](https://webpack.js.org/concepts/dependency-graph/) pattern.
 
 **What made webpack groundbreaking:**
-- **Universal module system**: AMD, CommonJS, ES6 modules in one tool
-- **Code splitting**: Dynamic imports for performance optimization
-- **Loader ecosystem**: Transform any file type (JS, CSS, images, fonts)
-- **Hot Module Replacement**: Update code without full page refresh
-- **Plugin architecture**: Extensible build pipeline
+- **Universal module system**: [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD), [CommonJS](https://en.wikipedia.org/wiki/CommonJS), [ES6 modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) in one tool
+- **[Code splitting](https://webpack.js.org/guides/code-splitting/)**: Dynamic imports for performance optimization
+- **[Loader ecosystem](https://webpack.js.org/concepts/loaders/)**: Transform any file type (JS, CSS, images, fonts)
+- **[Hot Module Replacement (HMR)](https://webpack.js.org/concepts/hot-module-replacement/)**: Update code without full page refresh
+- **[Plugin architecture](https://webpack.js.org/concepts/plugins/)**: Extensible build pipeline
 
-This project showcases webpack 1's complexity with modular configuration:
-- `/conf/webpack/entries/` - Environment-specific entry points
-- `/conf/webpack/loaders/` - Asset transformation pipeline
-- `/conf/webpack/plugins/` - Build optimization and tooling
+**This project's webpack configuration:**
+- [`conf/webpack/`](conf/webpack/) - Modular webpack configuration
+  - [`entries/`](conf/webpack/entries/) - Environment-specific entry points
+  - [`loaders/`](conf/webpack/loaders/) - Asset transformation pipeline ([`scripts.js`](conf/webpack/loaders/scripts.js), [`styles.js`](conf/webpack/loaders/styles.js), [`fonts.js`](conf/webpack/loaders/fonts.js))
+  - [`plugins/`](conf/webpack/plugins/) - Build optimization ([`common.js`](conf/webpack/plugins/common.js), [`production.js`](conf/webpack/plugins/production.js), [`development.js`](conf/webpack/plugins/development.js))
+  - [`settings.js`](conf/webpack/settings.js) - Shared settings
+  - [`helpers.js`](conf/webpack/helpers.js) - Utility functions
+- [`webpack.config.js`](webpack.config.js) - Main configuration entry point
+- [`src/js/server/`](src/js/server/) - Build scripts
+  - [`webpack-hot-reload.js`](src/js/server/webpack-hot-reload.js) - Development server with HMR
+  - [`build.js`](src/js/server/build.js) - Production build script
+
+**Example loader configuration** from [`loaders/scripts.js`](conf/webpack/loaders/scripts.js):
+```javascript
+// Babel loader: ES6+ → ES5 transpilation
+{
+  test: /\.jsx?$/,
+  exclude: /node_modules/,
+  loader: 'babel',
+  query: {
+    presets: ['es2015', 'stage-0', 'react']
+  }
+}
+```
 
 **Evolution context:**
-- Webpack 1.x (this project): Manual configuration, verbose setup
-- Webpack 2 (2016): Tree shaking, native ES6 modules
-- Webpack 4 (2018): Zero-config mode, major performance improvements
-- Webpack 5 (2020): Module federation, persistent caching
+- **Webpack 1.x** (this project): Manual configuration, `preLoaders`/`loaders` syntax
+- **Webpack 2** (2016): [Tree shaking](https://webpack.js.org/guides/tree-shaking/), native ES6 modules
+- **Webpack 4** (2018): Zero-config mode, performance improvements
+- **Webpack 5** (2020): [Module federation](https://webpack.js.org/concepts/module-federation/), persistent caching
 
 **Further reading:**
 - [Webpack: The Confusing Parts](https://medium.com/@rajaraodv/webpack-the-confusing-parts-58712f8fcad9)
-- [Webpack 1.x to 2.x Migration Guide](https://webpack.js.org/migrate/3/)
+- [Webpack Concepts](https://webpack.js.org/concepts/)
+- [What is Webpack?](https://survivejs.com/webpack/what-is-webpack/) - SurviveJS guide
 
 ## Technology Stack
 
@@ -81,9 +129,18 @@ This project showcases webpack 1's complexity with modular configuration:
 | [**redux-thunk**](https://github.com/reduxjs/redux-thunk) | 2.1.0 | Async actions | Middleware for side effects |
 
 **Key concepts:**
-- [**Flux Architecture**](https://facebook.github.io/flux/) - Unidirectional data flow pattern
-- [**Container/Presentational Components**](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) - Separation of concerns pattern by Dan Abramov
-- [**Higher-Order Components**](https://reactjs.org/docs/higher-order-components.html) - Component composition pattern (pre-Hooks)
+- [**Flux Architecture**](https://facebook.github.io/flux/) - [Unidirectional data flow](https://redux.js.org/basics/data-flow) pattern
+- [**Container/Presentational Components**](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) - [Separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) pattern by Dan Abramov
+- [**Higher-Order Components (HOCs)**](https://reactjs.org/docs/higher-order-components.html) - Component composition pattern (pre-Hooks)
+- [**Pure Functions**](https://en.wikipedia.org/wiki/Pure_function) - Predictable, testable reducers
+- [**Middleware**](https://redux.js.org/understanding/history-and-design/middleware) - Extensible action processing pipeline
+- [**Action Creators**](https://redux.js.org/tutorials/fundamentals/part-7-standard-patterns#action-creators) - Encapsulate action creation logic
+
+**Implementation files:**
+- [`src/js/client/containers/app.js`](src/js/client/containers/app.js) - Smart container component
+- [`src/js/client/components/app.js`](src/js/client/components/app.js) - Presentational component
+- [`src/js/client/components/menu.js`](src/js/client/components/menu.js) - Menu UI component
+- [`src/js/client/components/topping.js`](src/js/client/components/topping.js) - Individual topping component
 
 ### Build Pipeline & Tooling
 
@@ -103,17 +160,38 @@ This project showcases webpack 1's complexity with modular configuration:
 ### Development Experience
 
 **Hot Module Replacement (HMR):**
-The project implements sophisticated HMR setup combining:
-- `webpack-hot-middleware` - Webpack HMR server
-- `react-transform-hmr` - React component hot reloading
-- `redux-hot-loader` - Preserve state across reloads
+The project implements sophisticated [**HMR**](https://webpack.js.org/concepts/hot-module-replacement/) setup combining multiple tools:
+
+- [**webpack-hot-middleware**](https://github.com/webpack-contrib/webpack-hot-middleware) - Webpack HMR server
+- [**react-transform-hmr**](https://github.com/gaearon/react-transform-hmr) - React component hot reloading (by Dan Abramov)
+- [**redux-hot-loader**](https://github.com/reduxjs/redux-devtools) - Preserve state across reloads
+- [**BrowserSync**](https://browsersync.io/) - Multi-device synchronization
+
+**HMR implementation:**
+- [`src/js/server/webpack-hot-reload.js`](src/js/server/webpack-hot-reload.js) - Development server with HMR and BrowserSync
+- [`conf/webpack/plugins/development.js`](conf/webpack/plugins/development.js) - HMR plugins ([`HotModuleReplacementPlugin`](https://webpack.js.org/plugins/hot-module-replacement-plugin/), [`NoErrorsPlugin`](https://webpack.js.org/plugins/no-emit-on-errors-plugin/))
+- [`.babelrc`](.babelrc) - Babel transforms for HMR
+- [`src/js/client/index.js`](src/js/client/index.js) - HMR acceptance for reducers
 
 **Redux DevTools:**
-Integrated [Redux DevTools](https://github.com/reduxjs/redux-devtools) with:
-- Time-travel debugging
-- Action replay
-- State diff visualization
-- [Introducing Redux DevTools (2015)](https://medium.com/@dan_abramov/hot-reloading-in-react-1140438583bf)
+Integrated [**Redux DevTools**](https://github.com/reduxjs/redux-devtools) with complete debugging suite:
+
+- [**Time-travel debugging**](https://redux.js.org/usage/devtools#time-travel-debugging) - Rewind and replay actions
+- **Action replay** - Re-dispatch previous actions
+- **State diff visualization** - See what changed
+- [**redux-logger**](https://github.com/LogRocket/redux-logger) - Console logging middleware
+- [**DockMonitor**](https://github.com/reduxjs/redux-devtools-dock-monitor) - Dockable monitor UI
+- [**LogMonitor**](https://github.com/reduxjs/redux-devtools-log-monitor) - Action log display
+
+**DevTools implementation:**
+- [`src/js/client/store/development.js`](src/js/client/store/development.js) - DevTools integration
+- [`src/js/client/containers/dev-tools.js`](src/js/client/containers/dev-tools.js) - DevTools UI container
+- [`src/js/client/containers/root.development.js`](src/js/client/containers/root.development.js) - Root with DevTools
+
+**Further reading:**
+- [Hot Reloading in React](https://medium.com/@dan_abramov/hot-reloading-in-react-1140438583bf) - Dan Abramov (2014)
+- [Redux DevTools Walkthrough](https://www.youtube.com/watch?v=xsSnOQynTHs) - Video tutorial
+- [The Power of Hot Reloading](https://www.youtube.com/watch?v=xsSnOQynTHs) - Dan Abramov talk
 
 ### Polyfills & Browser Compatibility
 
@@ -147,22 +225,42 @@ Integrated [Redux DevTools](https://github.com/reduxjs/redux-devtools) with:
 ```
 
 **Unidirectional data flow:**
-1. User interaction triggers action creators
-2. Actions dispatched to reducers
+1. User interaction triggers [action creators](https://redux.js.org/tutorials/fundamentals/part-2-concepts-data-flow#actions)
+2. Actions dispatched to [reducers](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#writing-reducers)
 3. Reducers return new state (immutably)
-4. Store notifies connected components
-5. Components re-render with new props
+4. [Store](https://redux.js.org/api/store) notifies connected components via [subscriptions](https://redux.js.org/api/store#subscribelistener)
+5. Components re-render with new [props](https://react.dev/learn/passing-props-to-a-component)
 
-**Key files:**
-- `src/js/client/actions/` - Action creators (async with thunks)
-- `src/js/client/reducers/` - Pure state transformations
-- `src/js/client/store/` - Environment-specific store configuration
-- `src/js/client/constants/` - Action type constants
+**Key files in this project:**
+
+**Actions** (dispatching changes):
+- [`src/js/client/actions/toppings.js`](src/js/client/actions/toppings.js) - Topping-related actions ([thunks](https://github.com/reduxjs/redux-thunk) for async API calls)
+- [`src/js/client/actions/pizzas.js`](src/js/client/actions/pizzas.js) - Pizza creation and topping management actions
+- [`src/js/client/constants/actions.js`](src/js/client/constants/actions.js) - Action type constants ([FSA](https://github.com/redux-utilities/flux-standard-action) pattern)
+
+**Reducers** (pure state transformations):
+- [`src/js/client/reducers/toppings.js`](src/js/client/reducers/toppings.js) - Manages available toppings state
+- [`src/js/client/reducers/pizzas.js`](src/js/client/reducers/pizzas.js) - Manages user's pizza configurations
+- [`src/js/client/reducers/index.js`](src/js/client/reducers/index.js) - [Root reducer](https://redux.js.org/api/combinereducers) combining all reducers
+
+**Store** (single source of truth):
+- [`src/js/client/store/configure.js`](src/js/client/store/configure.js) - Environment-aware store factory
+- [`src/js/client/store/development.js`](src/js/client/store/development.js) - Dev store with [Redux DevTools](https://github.com/reduxjs/redux-devtools)
+- [`src/js/client/store/production.js`](src/js/client/store/production.js) - Production store (optimized)
+- [`src/js/client/store/test.js`](src/js/client/store/test.js) - Test store configuration
+
+**Data Layer** (API integration):
+- [`src/js/data/toppings.js`](src/js/data/toppings.js) - API calls using [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+- [`src/json/toppings.json`](src/json/toppings.json) - Mock API data
 
 ### Immutability Pattern
 
+All state is managed with [**Immutable.js**](https://immutable-js.com/) [persistent data structures](https://en.wikipedia.org/wiki/Persistent_data_structure):
+
 ```javascript
 // From src/js/client/reducers/toppings.js
+import { fromJS, List } from 'immutable'
+
 const initialState = fromJS({
   items: [],
   loading: false
@@ -178,15 +276,30 @@ export default (state = initialState, action) => {
 }
 ```
 
+**Immutable.js operations used:**
+- [`fromJS()`](https://immutable-js.com/docs/v3.8.1/fromJS/) - Convert plain JS to Immutable structures
+- [`Map`](https://immutable-js.com/docs/v3.8.1/Map/) - Immutable key-value pairs
+- [`List`](https://immutable-js.com/docs/v3.8.1/List/) - Immutable arrays
+- [`.set()`](https://immutable-js.com/docs/v3.8.1/Map/#set) - Update value (returns new Map)
+- [`.get()`](https://immutable-js.com/docs/v3.8.1/Map/#get) - Read value
+- [`.mergeIn()`](https://immutable-js.com/docs/v3.8.1/Map/#mergeIn) - Deep merge
+
 **Benefits:**
-- Prevents accidental mutations
-- Enables efficient `shouldComponentUpdate` optimizations
-- Time-travel debugging possible
+- Prevents [accidental mutations](https://alistapart.com/article/why-mutation-can-be-scary/)
+- Enables efficient [`shouldComponentUpdate`](https://reactjs.org/docs/react-component.html#shouldcomponentupdate) optimizations via [shallow equality](https://redux.js.org/faq/immutable-data#why-is-immutability-required)
+- [Time-travel debugging](https://redux.js.org/usage/implementing-undo-history) possible
 - Predictable state updates
+- [Structural sharing](https://medium.com/@dtinth/immutable-js-persistent-data-structures-and-structural-sharing-6d163fbd73d2) for memory efficiency
+
+**Implementation files:**
+- [`src/js/client/reducers/toppings.js`](src/js/client/reducers/toppings.js) - Immutable topping state
+- [`src/js/client/reducers/pizzas.js`](src/js/client/reducers/pizzas.js) - Immutable pizza state with nested updates
+- [`src/js/client/utils/local-storage.js`](src/js/client/utils/local-storage.js) - Serialize/deserialize Immutable data
 
 **Further reading:**
-- [Immutability in React](https://reactjs.org/docs/update.html)
-- [The Case for Immutability](https://medium.com/@kentcdodds/the-state-of-javascript-state-management-in-2019-e27e0d2b0c24)
+- [Immutability in React and Redux](https://daveceddia.com/react-redux-immutability-guide/)
+- [The Dao of Immutability](https://medium.com/javascript-scene/the-dao-of-immutability-9f91a70c88cd)
+- [Immutable.js: An Introduction](https://www.sitepoint.com/immutability-javascript/)
 
 ### Project Structure
 
@@ -215,10 +328,73 @@ conf/webpack/                # Modular webpack configuration
 ```
 
 **Design principles:**
-- **Separation of concerns**: Data, logic, and presentation layers
-- **Environment awareness**: Different configs for dev/prod/test
+- **[Separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns)**: Data, logic, and presentation layers
+- **[Environment awareness](https://12factor.net/config)**: Different configs for dev/prod/test
 - **Modular configuration**: Webpack config split across multiple files
-- **Colocation**: Tests mirror source structure
+- **[Colocation](https://kentcdodds.com/blog/colocation)**: Tests mirror source structure
+- **[DRY (Don't Repeat Yourself)](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)**: Shared utilities and helpers
+
+### Testing Strategy
+
+This project uses a comprehensive testing stack:
+
+**Test Framework:**
+- [**Mocha**](https://mochajs.org/) - Test runner with [BDD-style](https://en.wikipedia.org/wiki/Behavior-driven_development) syntax
+- [**Chai**](https://www.chaijs.com/) - [Assertion library](https://www.chaijs.com/api/assert/) with expect/should/assert APIs
+- [**Enzyme**](https://enzymejs.github.io/enzyme/) - React component testing utilities (by Airbnb)
+- [**Sinon**](https://sinonjs.org/) - [Test doubles](https://martinfowler.com/bliki/TestDouble.html) (spies, stubs, mocks)
+- [**Nock**](https://github.com/nock/nock) - HTTP mocking for API tests
+- [**mocha-webpack**](https://github.com/zinserjan/mocha-webpack) - Run tests in webpack context
+
+**Test files:**
+- [`test/unit/client/reducers/toppings.js`](test/unit/client/reducers/toppings.js) - Reducer unit tests
+- [`test/setup.js`](test/setup.js) - Test environment setup (JSDOM, Enzyme adapter)
+- [`.mocharc.json`](.mocharc.json) - Mocha configuration
+
+**Running tests:**
+```bash
+npm test                    # Run test suite
+npm run test:watch         # Watch mode
+```
+
+**Further reading:**
+- [Testing Redux](https://redux.js.org/usage/writing-tests) - Official guide
+- [Enzyme Documentation](https://enzymejs.github.io/enzyme/docs/api/)
+- [Testing React Components](https://medium.com/javascript-scene/unit-testing-react-components-aeda9a44aae2)
+
+### Advanced Patterns & Utilities
+
+**LocalStorage Persistence:**
+- [`src/js/client/utils/local-storage.js`](src/js/client/utils/local-storage.js) - [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API) wrapper
+- Automatic state persistence via [store subscription](https://redux.js.org/api/store#subscribelistener)
+- Immutable.js serialization/deserialization
+- Error handling for storage limits and privacy modes
+
+**Color Generation:**
+- [`src/js/client/utils/colors.js`](src/js/client/utils/colors.js) - Deterministic color generation from IDs
+- [HSL color space](https://en.wikipedia.org/wiki/HSL_and_HSV) manipulation
+- Sine wave algorithm for unique colors
+
+**PropTypes Validation:**
+All components use [**PropTypes**](https://reactjs.org/docs/typechecking-with-proptypes.html) for runtime type checking:
+```javascript
+// From src/js/client/components/topping.js
+static propTypes = {
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
+  isDragging: PropTypes.bool.isRequired
+}
+```
+
+**Utility Libraries:**
+- [**lodash**](https://lodash.com/) - Functional utilities ([`isEqual`](https://lodash.com/docs/#isEqual), [`toArray`](https://lodash.com/docs/#toArray), [`head`](https://lodash.com/docs/#head), [`gte`](https://lodash.com/docs/#gte))
+- [**classnames**](https://github.com/JedWatson/classnames) - Conditional CSS class composition
+
+**Code Quality:**
+- [`.eslintrc`](.eslintrc) - ESLint configuration with [React rules](https://github.com/jsx-eslint/eslint-plugin-react)
+- [`.editorconfig`](.editorconfig) - Consistent code formatting across editors
+- [`package.json`](package.json) - npm scripts and dependencies
 
 ## What This Project Demonstrates
 
@@ -256,21 +432,26 @@ This codebase is valuable for understanding:
 
 ## Prerequisites
 
-- Docker and Docker Compose (recommended)
-- OR Node 8.x and npm/yarn (if running locally)
+- [**Docker**](https://docs.docker.com/get-docker/) and [**Docker Compose**](https://docs.docker.com/compose/) (recommended)
+- OR [**Node.js 8.x**](https://nodejs.org/) and npm/yarn (if running locally)
 
 ## Installation & Usage
 
 ### Using Docker (Recommended)
 
-Docker ensures you can run the project without worrying about Node version compatibility.
+[Docker](https://www.docker.com/) ensures you can run the project without worrying about [Node version compatibility](https://nodejs.org/en/about/releases/).
+
+**Configuration files:**
+- [`Dockerfile`](Dockerfile) - [Node 8 Alpine](https://hub.docker.com/_/node) image with app setup
+- [`docker-compose.yml`](docker-compose.yml) - Service orchestration and [volume mounting](https://docs.docker.com/storage/volumes/)
+- [`.dockerignore`](.dockerignore) - Excludes `node_modules` from build context
 
 **Start the development server:**
 ```bash
 docker-compose up
 ```
 
-The app will be available at http://localhost:8080 with hot-reload enabled.
+The app will be available at **http://localhost:8080** with [hot-reload](#development-experience) enabled.
 
 **Stop the server:**
 ```bash
@@ -289,26 +470,69 @@ docker-compose run app yarn build
 
 # Linting
 docker-compose run app yarn lint
+
+# Tests
+docker-compose run app yarn test
 ```
 
 ### Using Local Node (Alternative)
 
-If you have Node 8.x installed locally:
+If you have [Node 8.x](https://nodejs.org/dist/latest-v8.x/) installed locally:
 
 **Installation:**
 ```bash
 npm install
+# or
+yarn install
 ```
 
 **Development:**
 ```bash
-npm start
+npm start          # Start dev server with HMR
+npm run dev        # Alias for npm start
 ```
 
-**Build:**
+Development server runs at **http://localhost:8080**
+
+**Production build:**
 ```bash
-npm run build
+npm run build      # Build optimized bundle
 ```
+
+Output: `build/` directory with minified assets
+
+**Code quality:**
+```bash
+npm run lint       # Run ESLint
+npm test           # Run test suite
+npm run test:watch # Run tests in watch mode
+```
+
+**Available npm scripts** (from [`package.json`](package.json)):
+- `start` / `dev` - Development server ([`webpack-hot-reload.js`](src/js/server/webpack-hot-reload.js))
+- `build` - Production build ([`build.js`](src/js/server/build.js))
+- `lint` - ESLint with React plugin
+- `test` - Mocha test runner
+- `test:watch` - Tests in watch mode
+
+### Build Output
+
+**Development mode:**
+- Source maps: `eval` for fast rebuilds
+- No minification
+- [HMR enabled](https://webpack.js.org/concepts/hot-module-replacement/)
+- Redux DevTools active
+
+**Production mode:**
+- Minified with [UglifyJS](https://github.com/mishoo/UglifyJS)
+- Gzipped assets via [compression-webpack-plugin](https://github.com/webpack-contrib/compression-webpack-plugin)
+- [CSS extracted](https://github.com/webpack-contrib/extract-text-webpack-plugin) to separate file
+- Source maps: `cheap-module-source-map`
+- [Dead code elimination](https://webpack.js.org/guides/tree-shaking/)
+
+**Build configuration:**
+- Production: [`conf/webpack/plugins/production.js`](conf/webpack/plugins/production.js)
+- Development: [`conf/webpack/plugins/development.js`](conf/webpack/plugins/development.js)
 
 ## Demo
 http://fernandocamargo.com/pizza/
@@ -386,9 +610,12 @@ Understanding webpack 1 helps you appreciate Vite. Knowing class components help
 
 ### Why Immutable.js?
 
-In 2016, JavaScript lacked native immutable data structures. Immutable.js provided:
+In 2016, JavaScript lacked native [immutable data structures](https://en.wikipedia.org/wiki/Immutable_object). [Immutable.js](https://immutable-js.com/) provided [persistent data structures](https://en.wikipedia.org/wiki/Persistent_data_structure) with [structural sharing](https://medium.com/@dtinth/immutable-js-persistent-data-structures-and-structural-sharing-6d163fbd73d2):
 
 ```javascript
+// From src/js/client/reducers/pizzas.js
+import { Map } from 'immutable'
+
 // Efficient updates without mutation
 const state1 = Map({ count: 0 })
 const state2 = state1.set('count', 1)
@@ -398,52 +625,113 @@ state1.get('count')  // 0 (original unchanged)
 state2.get('count')  // 1 (new version)
 ```
 
+**Benefits in 2016:**
+- [Reference equality checks](https://redux.js.org/faq/immutable-data#how-do-i-use-immutable-data-structures-with-redux) for `shouldComponentUpdate`
+- Prevented [mutation bugs](https://alistapart.com/article/why-mutation-can-be-scary/)
+- Enabled [time-travel debugging](https://redux.js.org/usage/implementing-undo-history)
+
 **Modern alternative (2025):**
 ```javascript
 // Immer library or native spread operators
+import produce from 'immer'
+
 const state1 = { count: 0 }
-const state2 = { ...state1, count: 1 }
+const state2 = produce(state1, draft => { draft.count = 1 })
 ```
+
+**See implementation:** [`src/js/client/reducers/pizzas.js`](src/js/client/reducers/pizzas.js)
 
 ### Why Redux Thunk?
 
-Before async/await was standardized, thunks provided elegant async actions:
+Before [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) was standardized (ES2017), [thunks](https://github.com/reduxjs/redux-thunk) provided elegant async actions using [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise):
 
 ```javascript
-// Thunk returns a function instead of action object
+// From src/js/client/actions/toppings.js
 export const fetchToppings = (dispatch) => {
   dispatch(setLoadingStatus(true))
   return Data.getToppings()
     .then(toJSON)
     .then(formatToppings)
     .then(dispatchFetchResponse.bind(dispatch))
+    .then(dispatchLoadingStatus.bind(dispatch))
 }
 ```
 
-**Modern alternative:**
+**Why thunks in 2016:**
+- [Side effects](https://redux.js.org/understanding/thinking-in-redux/motivation#why-do-i-need-this) outside reducers
+- [Delayed dispatch](https://github.com/reduxjs/redux-thunk#motivation) for async operations
+- [Function composition](https://en.wikipedia.org/wiki/Function_composition_(computer_science)) with promises
+
+**Modern alternative (2025):**
 ```javascript
-// React Query / SWR handle this entirely
+// React Query / SWR handle caching, loading, error states
+import { useQuery } from '@tanstack/react-query'
+
 const { data, isLoading } = useQuery('toppings', fetchToppings)
 ```
 
+**See implementation:** [`src/js/client/actions/toppings.js`](src/js/client/actions/toppings.js)
+
 ### Why HOCs (Higher-Order Components)?
 
-HOCs enabled component composition before Hooks:
+[HOCs](https://reactjs.org/docs/higher-order-components.html) enabled [component composition](https://en.wikipedia.org/wiki/Object_composition) and [cross-cutting concerns](https://en.wikipedia.org/wiki/Cross-cutting_concern) before [Hooks](https://reactjs.org/docs/hooks-intro.html):
 
 ```javascript
-// Wrap component with drag-and-drop behavior
+// From src/js/client/components/topping.js
 export default DragSource(TOPPING_DRAG_SOURCE, source, collect)(Topping)
 ```
 
+**HOC pattern:**
+- Takes a component and returns a new component
+- [Decorator pattern](https://en.wikipedia.org/wiki/Decorator_pattern) for React
+- Enables [mixins](https://reactjs.org/blog/2016/07/13/mixins-considered-harmful.html) replacement
+- Used by react-dnd, react-redux ([`connect`](https://react-redux.js.org/api/connect))
+
 **Modern alternative (react-dnd hooks):**
 ```javascript
+// react-dnd v14+ (2021)
+import { useDrag } from 'react-dnd'
+
 function Topping() {
   const [{ isDragging }, drag] = useDrag({
     type: TOPPING_DRAG_SOURCE,
-    // ...
+    item: { type: TOPPING_DRAG_SOURCE }
   })
+  return <div ref={drag}>...</div>
 }
 ```
+
+**See implementation:**
+- [`src/js/client/components/topping.js`](src/js/client/components/topping.js) - DragSource HOC
+- [`src/js/client/components/pizza.js`](src/js/client/components/pizza.js) - DropTarget HOC
+- [`src/js/client/containers/app.js`](src/js/client/containers/app.js) - Redux `connect` HOC
+
+### Why Babel Stage-0?
+
+The [`.babelrc`](.babelrc) uses `stage-0` preset for experimental features:
+
+```json
+{
+  "presets": ["es2015", "stage-0", "react"],
+  "plugins": ["transform-decorators-legacy"]
+}
+```
+
+**Stage-0 features used:**
+- [**Decorators**](https://github.com/tc39/proposal-decorators) - `@DragSource` syntax (still not standard!)
+- [**Class properties**](https://github.com/tc39/proposal-class-fields) - `static propTypes = {}`
+- [**Object rest/spread**](https://github.com/tc39/proposal-object-rest-spread) - `{...obj}` (now ES2018)
+- [**Async/await**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) - `async function` (now ES2017)
+
+**TC39 Process:**
+- [Stage 0](https://tc39.es/process-document/) - Strawperson (idea phase)
+- Stage 1 - Proposal
+- Stage 2 - Draft
+- Stage 3 - Candidate
+- Stage 4 - Finished (added to spec)
+
+**Modern approach:**
+Use only [stable features](https://babeljs.io/docs/presets) or [Stage 3+](https://babeljs.io/docs/babel-preset-stage-3) proposals
 
 ## Contributing & Feedback
 
