@@ -2,6 +2,8 @@
 
 A React 15 + webpack 1 pizza builder from the 2016 era - a time capsule of cutting-edge web development practices from the "golden age" of the React/Redux ecosystem.
 
+<img width="1437" height="743" alt="Screenshot 2025-12-24 at 19 23 59" src="https://github.com/user-attachments/assets/3185419a-c2ce-4d04-856a-fc044cb60083" />
+
 ## Table of Contents
 
 - [Overview](#overview)
