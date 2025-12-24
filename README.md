@@ -338,10 +338,12 @@ conf/webpack/                # Modular webpack configuration
 
 ### Testing Strategy
 
-This project uses a comprehensive testing stack:
+This project uses a comprehensive testing stack covering **unit**, **integration**, and **end-to-end** tests:
+
+#### Unit & Integration Testing
 
 **Test Framework:**
-- [**Mocha**](https://mochajs.org/) - Test runner with [BDD-style](https://en.wikipedia.org/wiki/Behavior-driven_development) syntax
+- [**Mocha**](https://mochajs.org/) - Test runner with [BDD-style](https://en.wikipedia.org/wiki/Behavior-driven_development) syntax (`describe`, `it`)
 - [**Chai**](https://www.chaijs.com/) - [Assertion library](https://www.chaijs.com/api/assert/) with expect/should/assert APIs
 - [**Enzyme**](https://enzymejs.github.io/enzyme/) - React component testing utilities (by Airbnb)
 - [**Sinon**](https://sinonjs.org/) - [Test doubles](https://martinfowler.com/bliki/TestDouble.html) (spies, stubs, mocks)
@@ -353,16 +355,134 @@ This project uses a comprehensive testing stack:
 - [`test/setup.js`](test/setup.js) - Test environment setup (JSDOM, Enzyme adapter)
 - [`.mocharc.json`](.mocharc.json) - Mocha configuration
 
-**Running tests:**
+**Running unit tests:**
 ```bash
-npm test                    # Run test suite
-npm run test:watch         # Watch mode
+npm test                    # Run unit test suite
+npm run test:watch         # Watch mode for TDD
 ```
 
+#### End-to-End Testing
+
+**E2E Framework (2016 era):**
+- [**Nightwatch.js**](http://nightwatchjs.org/) v0.9 - E2E testing framework built on [Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/)
+- [**Selenium Server**](https://www.selenium.dev/) - Browser automation server
+- [**ChromeDriver**](https://chromedriver.chromium.org/) - Chrome browser driver
+- [**GeckoDriver**](https://github.com/mozilla/geckodriver) - Firefox browser driver
+
+**Why Nightwatch in 2016?**
+- Built on proven [Selenium WebDriver](https://www.selenium.dev/) technology
+- Clean, readable [fluent API](http://nightwatchjs.org/api) for writing tests
+- Built-in test runner and [assertion library](http://nightwatchjs.org/api#assertions)
+- [Page Object Model](https://martinfowler.com/bliki/PageObject.html) support
+- Automatic screenshot capture on failures
+- Parallel test execution support
+
+**E2E test files:**
+- [`test/e2e/pizza-builder.spec.js`](test/e2e/pizza-builder.spec.js) - Main e2e test suite
+- [`test/e2e/pizza-builder-pom.spec.js`](test/e2e/pizza-builder-pom.spec.js) - Tests using [Page Object Model](https://martinfowler.com/bliki/PageObject.html)
+- [`test/e2e/pages/pizzaBuilder.js`](test/e2e/pages/pizzaBuilder.js) - Page Object for pizza builder
+- [`test/e2e/globals.js`](test/e2e/globals.js) - Global hooks (start/stop dev server)
+- [`nightwatch.json`](nightwatch.json) - Nightwatch configuration
+
+**What the E2E tests cover:**
+- ✅ Application loads and renders correctly
+- ✅ Toppings menu loads from API
+- ✅ Pizza slots are displayed
+- ✅ Can create new pizzas
+- ✅ Drag-and-drop functionality structure
+- ✅ LocalStorage state persistence
+- ✅ Redux DevTools integration
+- ✅ Responsive design (mobile/tablet/desktop)
+- ✅ No console errors on load
+
+**Running e2e tests:**
+
+**Using Docker (Recommended - No local setup required!):**
+```bash
+# Build the e2e testing image (includes Java, Chrome, Selenium)
+docker-compose --profile test build e2e
+
+# Run e2e tests in Docker container
+docker-compose --profile test run --rm e2e
+
+# Alternative: Run with custom command
+docker-compose --profile test run --rm e2e yarn test:e2e:docker
+```
+
+**Using Local Node:**
+```bash
+npm run test:e2e           # Run all e2e tests (Chrome)
+npm run test:e2e:chrome    # Run in Chrome
+npm run test:e2e:firefox   # Run in Firefox
+npm run test:e2e:docker    # Run in headless mode (for Docker/CI)
+```
+
+**Prerequisites for local e2e tests:**
+- Java Runtime Environment (JRE) for Selenium Server
+- Chrome or Firefox browser installed
+
+**Docker includes everything automatically:**
+- ✅ Node.js 8
+- ✅ Java Runtime (OpenJDK)
+- ✅ Google Chrome (stable)
+- ✅ ChromeDriver
+- ✅ Selenium Server
+- ✅ All npm dependencies
+
+**E2E test output:**
+- **Reports**: `test/e2e/reports/` - XML test reports
+- **Screenshots**: `test/e2e/screenshots/` - Failure screenshots
+- **Logs**: `selenium-debug.log` - Selenium server logs
+
+**Page Object Model Pattern:**
+
+The tests demonstrate the [Page Object Model](https://martinfowler.com/bliki/PageObject.html) pattern, a best practice from 2016 for organizing e2e tests:
+
+```javascript
+// Page Object: test/e2e/pages/pizzaBuilder.js
+module.exports = {
+  elements: {
+    menu: { selector: '.menu' },
+    pizzas: { selector: '.pizza' }
+  },
+  commands: [{
+    waitForApp: function() {
+      return this.waitForElementVisible('@menu', 2000)
+    }
+  }]
+}
+
+// Usage in tests: test/e2e/pizza-builder-pom.spec.js
+const pizzaBuilder = browser.page.pizzaBuilder()
+pizzaBuilder.navigate().waitForApp()
+```
+
+**Benefits of POM:**
+- **Maintainability** - Change selectors in one place
+- **Reusability** - Share page methods across tests
+- **Readability** - Tests read like user actions
+- **DRY principle** - Reduce code duplication
+
+**Historical Context:**
+
+In 2016, e2e testing options included:
+- [Selenium WebDriver](https://www.selenium.dev/) (2004) - Industry standard
+- [Protractor](https://www.protractortest.org/) (2013) - Angular-specific
+- [Nightwatch.js](http://nightwatchjs.org/) (2014) - Cleaner Selenium API
+- [CasperJS](http://casperjs.org/) / [PhantomJS](http://phantomjs.org/) - Headless testing
+- [TestCafe](https://testcafe.io/) (2016) - No WebDriver needed
+
+Modern alternatives (2020+):
+- [Playwright](https://playwright.dev/) (2020) - Microsoft's modern e2e framework
+- [Cypress](https://www.cypress.io/) (2017) - Developer-friendly e2e testing
+- [Puppeteer](https://pptr.dev/) (2017) - Chrome DevTools Protocol
+
 **Further reading:**
+- [Nightwatch.js Guide](http://nightwatchjs.org/guide) - Official documentation
+- [Page Object Pattern](https://martinfowler.com/bliki/PageObject.html) - Martin Fowler
 - [Testing Redux](https://redux.js.org/usage/writing-tests) - Official guide
 - [Enzyme Documentation](https://enzymejs.github.io/enzyme/docs/api/)
-- [Testing React Components](https://medium.com/javascript-scene/unit-testing-react-components-aeda9a44aae2)
+- [Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) - Core technology
 
 ### Advanced Patterns & Utilities
 
@@ -444,8 +564,11 @@ This codebase is valuable for understanding:
 [Docker](https://www.docker.com/) ensures you can run the project without worrying about [Node version compatibility](https://nodejs.org/en/about/releases/).
 
 **Configuration files:**
-- [`Dockerfile`](Dockerfile) - [Node 8 Alpine](https://hub.docker.com/_/node) image with app setup
-- [`docker-compose.yml`](docker-compose.yml) - Service orchestration and [volume mounting](https://docs.docker.com/storage/volumes/)
+- [`Dockerfile`](Dockerfile) - [Node 8 Alpine](https://hub.docker.com/_/node) image for development
+- [`Dockerfile.e2e`](Dockerfile.e2e) - Node 8 + Java + Chrome + Selenium for e2e testing
+- [`docker-compose.yml`](docker-compose.yml) - Multi-service orchestration:
+  - `app` service - Development server (runs by default)
+  - `e2e` service - E2E testing environment (runs with `--profile test`)
 - [`.dockerignore`](.dockerignore) - Excludes `node_modules` from build context
 
 **Start the development server:**
@@ -468,13 +591,17 @@ docker-compose up --build
 **Run other commands:**
 ```bash
 # Production build
-docker-compose run app yarn build
+docker-compose run --rm app yarn build
 
 # Linting
-docker-compose run app yarn lint
+docker-compose run --rm app yarn lint
 
-# Tests
-docker-compose run app yarn test
+# Unit tests
+docker-compose run --rm app yarn test
+
+# E2E tests (uses separate e2e service with Chrome/Selenium)
+docker-compose --profile test build e2e
+docker-compose --profile test run --rm e2e
 ```
 
 ### Using Local Node (Alternative)

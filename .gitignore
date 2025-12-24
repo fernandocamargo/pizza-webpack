@@ -24,4 +24,10 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 
+# Build output
 dist
+
+# E2E test artifacts
+test/e2e/reports
+test/e2e/screenshots
+selenium-debug.log

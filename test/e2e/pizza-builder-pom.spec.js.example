@@ -1,0 +1,87 @@
+/**
+ * Pizza Builder E2E Tests (Using Page Object Model)
+ *
+ * Demonstrates the Page Object Model pattern for cleaner, more maintainable tests
+ * This was a best practice in 2016 for organizing Selenium/Nightwatch tests
+ *
+ * @see http://nightwatchjs.org/guide#page-objects
+ * @see https://martinfowler.com/bliki/PageObject.html
+ */
+
+module.exports = {
+  /**
+   * Setup - runs before each test
+   */
+  beforeEach: function(browser) {
+    browser
+      .url('http://localhost:8080')
+      .waitForElementVisible('body', 2000)
+      .pause(1000) // Give React time to mount
+  },
+
+  /**
+   * Teardown - runs after all tests
+   */
+  after: function(browser) {
+    browser.end()
+  },
+
+  /**
+   * Test using Page Object Model
+   */
+  'POM: Application loads successfully': function(browser) {
+    const pizzaBuilder = browser.page.pizzaBuilder()
+
+    pizzaBuilder
+      .waitForApp()
+      .assert.elementPresent('@header') // Header exists but is hidden by CSS
+      .assert.visible('@menu')
+      .assert.visible('@pizzasContainer')
+      .assert.visible('@menuHeading')
+      .assert.visible('@pizzasHeading')
+  },
+
+  /**
+   * Test: Verify topping count
+   */
+  'POM: Toppings menu displays multiple toppings': function(browser) {
+    const pizzaBuilder = browser.page.pizzaBuilder()
+
+    pizzaBuilder
+      .waitForApp()
+      .getToppingCount(function(count) {
+        browser.assert.ok(
+          count > 0,
+          `Expected at least 1 topping, found ${count}`
+        )
+      })
+  },
+
+  /**
+   * Test: Pizza structure
+   */
+  'POM: Pizzas have proper structure': function(browser) {
+    const pizzaBuilder = browser.page.pizzaBuilder()
+
+    pizzaBuilder
+      .waitForApp()
+      .getPizzaCount(function(count) {
+        browser.assert.ok(
+          count > 0,
+          `Expected at least 1 pizza, found ${count}`
+        )
+      })
+      .assert.visible('@pizzaToppings')
+  },
+
+  /**
+   * Test: Individual topping visibility
+   */
+  'POM: Individual toppings are visible': function(browser) {
+    const pizzaBuilder = browser.page.pizzaBuilder()
+
+    pizzaBuilder
+      .waitForApp()
+      .assert.visible('@toppings')
+  }
+}

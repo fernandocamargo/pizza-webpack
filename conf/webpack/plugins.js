@@ -4,7 +4,8 @@ const extract = require('extract-text-webpack-plugin')
 const environment = require('./../environment')
 const environments = {
   development: require('./plugins/development'),
-  production: require('./plugins/production')
+  production: require('./plugins/production'),
+  test: require('./plugins/test')
 }
 
 const plugins = environments[environment]

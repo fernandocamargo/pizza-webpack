@@ -11,3 +11,22 @@ services:
     environment:
       - NODE_ENV=development
     command: yarn start
+
+  # E2E Testing Service
+  # Includes Java, Selenium, Chrome for running Nightwatch tests
+  e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - DISPLAY=:99
+    # Use tmpfs for /dev/shm to prevent Chrome crashes
+    shm_size: 2gb
+    # Run tests on demand, not automatically
+    profiles:
+      - test
+    command: bash ./test/e2e/run-tests.sh

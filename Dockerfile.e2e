@@ -1,0 +1,77 @@
+# Dockerfile for E2E Testing
+# Includes all dependencies needed for Nightwatch.js + Selenium + Chrome
+#
+# Based on Node 8 to match 2016 era, with additions for browser automation
+
+FROM node:8
+
+# Fix Debian Stretch EOL repository issues
+# Debian Stretch is no longer supported, so we need to use the archive
+RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list \
+    && sed -i 's|security.debian.org|archive.debian.org/|g' /etc/apt/sources.list \
+    && sed -i '/stretch-updates/d' /etc/apt/sources.list
+
+# Install dependencies for Chrome and Selenium
+RUN apt-get update && apt-get install -y \
+    # Java Runtime for Selenium Server
+    default-jre \
+    # Utilities
+    wget \
+    curl \
+    gnupg2 \
+    ca-certificates \
+    apt-transport-https \
+    # X11 dependencies for headless Chrome
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxi6 \
+    libxtst6 \
+    libnss3 \
+    libcups2 \
+    libxss1 \
+    libxrandr2 \
+    libasound2 \
+    libpangocairo-1.0-0 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    # Cleanup
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Chromium (open-source version of Chrome, available for ARM64)
+# Chromium works with ChromeDriver and is fully compatible with our tests
+RUN apt-get update && apt-get install -y \
+    chromium \
+    chromium-driver \
+    && rm -rf /var/lib/apt/lists/*
+
+# Verify installations
+RUN java -version && chromium --version
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json yarn.lock* ./
+
+# Install dependencies
+RUN yarn install --ignore-engines || npm install
+
+# Copy project files
+COPY . .
+
+# Create directories for test output
+RUN mkdir -p test/e2e/reports test/e2e/screenshots
+
+# Make test runner executable
+RUN chmod +x test/e2e/run-tests.sh
+
+# Expose port for dev server
+EXPOSE 8080
+
+# Default command runs e2e tests with dev server
+CMD ["./test/e2e/run-tests.sh"]

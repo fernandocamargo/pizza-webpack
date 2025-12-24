@@ -1,0 +1,118 @@
+/**
+ * Pizza Builder E2E Tests
+ *
+ * End-to-end tests for the pizza builder drag-and-drop functionality
+ * using Nightwatch.js (2016 era e2e testing framework)
+ *
+ * @see http://nightwatchjs.org/api
+ */
+
+module.exports = {
+  /**
+   * Setup - runs before each test
+   */
+  beforeEach: function(browser) {
+    browser
+      .url(browser.launch_url)
+      .waitForElementVisible('body', 2000)
+      .pause(1000) // Give React time to mount
+  },
+
+  /**
+   * Teardown - runs after each test
+   */
+  after: function(browser) {
+    browser.end()
+  },
+
+  /**
+   * Test: Application loads successfully
+   */
+  'Application loads and displays correctly': function(browser) {
+    browser
+      .waitForElementVisible('#root', 2000)
+      .waitForElementVisible('.menu', 2000)
+      .waitForElementVisible('.pizzas', 2000)
+  },
+
+  /**
+   * Test: Toppings menu is loaded from API
+   */
+  'Toppings menu loads with available toppings': function(browser) {
+    browser
+      .waitForElementVisible('.menu', 2000)
+      .waitForElementVisible('.menu .topic', 3000)
+      .elements('css selector', '.menu .topic', function(result) {
+        // Should have multiple toppings available
+        browser.assert.ok(
+          result.value.length > 0,
+          'At least one topping should be available in the menu'
+        )
+      })
+  },
+
+  /**
+   * Test: Pizza slots are rendered
+   */
+  'Pizza slots are displayed': function(browser) {
+    browser
+      .waitForElementVisible('.pizzas', 2000)
+      .waitForElementVisible('.pizzas dl', 3000)
+      .elements('css selector', '.pizzas dl', function(result) {
+        // Should have pizza slots
+        browser.assert.ok(
+          result.value.length > 0,
+          'At least one pizza slot should be available'
+        )
+      })
+  },
+
+  /**
+   * Test: Pizza slots have proper structure
+   */
+  'Pizza slots have proper structure': function(browser) {
+    browser
+      .waitForElementVisible('.pizzas dl', 2000)
+      .assert.elementPresent('.pizzas dl dt.title', 'Pizza should have title')
+      .assert.elementPresent('.pizzas dl dd.description', 'Pizza should have description')
+  },
+
+  /**
+   * Test: Topping has drag functionality
+   */
+  'Toppings have drag-and-drop attributes': function(browser) {
+    browser
+      .waitForElementVisible('.menu .topic', 2000)
+      .assert.elementPresent('.menu .topic a.anchor', 'Topping should have clickable anchor')
+  },
+
+  /**
+   * Test: Multiple toppings can be added to pizza
+   * Note: Actual drag-and-drop is complex in Selenium/Nightwatch
+   * This test verifies the UI structure is correct
+   */
+  'Pizza can display toppings list': function(browser) {
+    browser
+      .waitForElementVisible('.pizzas', 2000)
+      .assert.elementPresent('.pizzas .toppings', 'Pizza should have toppings list container')
+  },
+
+  /**
+   * Test: Menu and pizzas headings are present
+   */
+  'Application has proper section headings': function(browser) {
+    browser
+      .waitForElementVisible('.menu h2', 2000)
+      .assert.containsText('.menu h2', 'toppings', 'Menu should have toppings heading')
+      .assert.elementPresent('.pizzas h2', 'Pizzas section should have heading')
+  },
+
+  /**
+   * Test: Application layout is responsive
+   */
+  'Application has responsive wrapper': function(browser) {
+    browser
+      .assert.cssClassPresent('#root', 'wrapper', 'Root should have wrapper class')
+      .assert.cssClassPresent('#root', 'viewport', 'Root should have viewport class')
+  }
+}
